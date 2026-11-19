@@ -13,25 +13,52 @@ permissions:
 
 jobs:
   a11y-quality-gate:
-    name: 🛡️ Auditoria WCAG 2.2 com IA (Cypress + BDD)
+    name: 🛡️ Quality Gate WCAG 2.2 (Motor Externo de QA + IA)
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout do código
+      - name: 📥 Checkout do código do Sistema (Front-end Dev)
         uses: actions/checkout@v4
+        with:
+          path: app-frontend
+
+      - name: 🛡️ Checkout do Motor de Auditoria de QA (a11y-cypress-ia)
+        uses: actions/checkout@v4
+        with:
+          repository: AngeloFDiasGTech/a11y-cypress-ia
+          path: qa-audit-engine
 
       - name: ⚙️ Configurar Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
-      - name: 📦 Instalar dependências
+      - name: 📦 Instalar dependências do Motor de QA (Cypress + Cucumber + OpenAI)
+        working-directory: qa-audit-engine
         run: npm install
 
-      - name: 🚀 Subir aplicação e rodar Cypress + Cucumber + OpenAI (Headless)
-        id: cypress_run
-        run: npm run test:ci
+      - name: 🚀 Subir Aplicação do Dev e Executar Motor de Auditoria de QA
+        run: |
+          # 1. Sobe o front-end do desenvolvedor em background na porta 8080
+          npx --yes http-server ./app-frontend -p 8080 -c-1 --silent &
+          SERVER_PID=$!
+
+          # Aguarda o servidor responder
+          for i in $(seq 1 15); do
+            if curl -s http://localhost:8080 > /dev/null; then
+              echo "✅ Aplicação Front-end rodando em http://localhost:8080"
+              break
+            fi
+            sleep 1
+          done
+
+          # 2. Executa a suíte Cypress + Cucumber + OpenAI do repositório de QA apontando para a aplicação
+          cd qa-audit-engine
+          CYPRESS_URL_DO_PR="http://localhost:8080" npm run test:headless
+          EXIT_CODE=$?
+
+          kill $SERVER_PID || true
+          exit $EXIT_CODE
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
@@ -39,9 +66,10 @@ jobs:
         if: always()
         run: |
           echo "## 🤖 Relatório de Auditoria de Acessibilidade (WCAG 2.2 + OpenAI GPT-4o)" >> $GITHUB_STEP_SUMMARY
+          echo "*Motor de Auditoria: \`AngeloFDiasGTech/a11y-cypress-ia\`*" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f "cypress/reports/a11y-report.md" ]; then
-            cat cypress/reports/a11y-report.md >> $GITHUB_STEP_SUMMARY
+          if [ -f "qa-audit-engine/cypress/reports/a11y-report.md" ]; then
+            cat qa-audit-engine/cypress/reports/a11y-report.md >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ Nenhum relatório da IA foi gerado (verifique os logs do Cypress)." >> $GITHUB_STEP_SUMMARY
           fi
@@ -52,7 +80,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const path = 'cypress/reports/a11y-report.md';
+            const path = 'qa-audit-engine/cypress/reports/a11y-report.md';
             let reportContent = '⚠️ Não foi possível gerar o laudo da IA. Verifique a execução do Cypress nos logs da pipeline.';
             let isApproved = false;
 
@@ -68,6 +96,8 @@ jobs:
             const body = [
               '## 🤖 Auditoria Automática de Acessibilidade (Cypress + Cucumber + IA)',
               statusBadge,
+              '',
+              '> 🛡️ **Governança Shift-Left:** Auditoria executada pelo motor externo de QA [`AngeloFDiasGTech/a11y-cypress-ia`](https://github.com/AngeloFDiasGTech/a11y-cypress-ia).',
               '',
               '---',
               '',
@@ -90,6 +120,6 @@ jobs:
         with:
           name: relatorio-e-evidencias-a11y
           path: |
-            cypress/reports/
-            cypress/screenshots/
+            qa-audit-engine/cypress/reports/
+            qa-audit-engine/cypress/screenshots/
           if-no-files-found: ignore

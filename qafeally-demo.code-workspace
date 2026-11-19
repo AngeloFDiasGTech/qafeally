@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "name": "💻 1. Sistema Front-end (qafeally - Repo do Dev)",
+      "path": "."
+    },
+    {
+      "name": "🛡️ 2. Motor de Quality Gate (a11y-cypress-ia - Repo de QA)",
+      "path": "../a11y-cypress-ia"
+    }
+  ],
+  "settings": {}
+}
