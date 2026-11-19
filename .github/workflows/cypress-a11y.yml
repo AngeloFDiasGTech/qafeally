@@ -1,0 +1,95 @@
+name: Quality Gate — Auditoria de Acessibilidade (Cypress + Cucumber + OpenAI)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  a11y-quality-gate:
+    name: 🛡️ Auditoria WCAG 2.2 com IA (Cypress + BDD)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 📦 Instalar dependências
+        run: npm install
+
+      - name: 🚀 Subir aplicação e rodar Cypress + Cucumber + OpenAI (Headless)
+        id: cypress_run
+        run: npm run test:ci
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: 📊 Publicar Laudo de Acessibilidade no GitHub Job Summary
+        if: always()
+        run: |
+          echo "## 🤖 Relatório de Auditoria de Acessibilidade (WCAG 2.2 + OpenAI GPT-4o)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "cypress/reports/a11y-report.md" ]; then
+            cat cypress/reports/a11y-report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Nenhum relatório da IA foi gerado (verifique os logs do Cypress)." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 💬 Comentar Laudo da IA diretamente no Pull Request
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'cypress/reports/a11y-report.md';
+            let reportContent = '⚠️ Não foi possível gerar o laudo da IA. Verifique a execução do Cypress nos logs da pipeline.';
+            let isApproved = false;
+
+            if (fs.existsSync(path)) {
+              reportContent = fs.readFileSync(path, 'utf8');
+              isApproved = !reportContent.includes('[VIOLAÇÃO CRÍTICA]') && reportContent.includes('[ACESSÍVEL]');
+            }
+
+            const statusBadge = isApproved
+              ? '### ✅ Quality Gate Aprovado — Código Acessível (WCAG 2.2)'
+              : '### ❌ Quality Gate Reprovado — Violação Crítica de Acessibilidade Detectada';
+
+            const body = [
+              '## 🤖 Auditoria Automática de Acessibilidade (Cypress + Cucumber + IA)',
+              statusBadge,
+              '',
+              '---',
+              '',
+              reportContent,
+              '',
+              '---',
+              `*Auditoria executada no commit \`${context.sha.substring(0, 7)}\` pela esteira de Shift-Left Accessibility da **QAfé Academy**.*`
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: 📸 Upload de Screenshots e Relatórios (Artefatos)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-e-evidencias-a11y
+          path: |
+            cypress/reports/
+            cypress/screenshots/
+          if-no-files-found: ignore

@@ -1,0 +1,17 @@
+# Dependências
+node_modules/
+
+# Artefatos e relatórios temporários do Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/reports/
+cypress/downloads/
+
+# Variáveis de ambiente locais
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
