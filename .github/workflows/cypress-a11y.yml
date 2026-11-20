@@ -27,10 +27,10 @@ jobs:
           repository: AngeloFDiasGTech/a11y-cypress-ia
           path: qa-audit-engine
 
-      - name: ⚙️ Configurar Node.js 20
+      - name: ⚙️ Configurar Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: 📦 Instalar dependências do Motor de QA (Cypress + Cucumber + OpenAI)
         working-directory: qa-audit-engine
@@ -55,6 +55,7 @@ jobs:
             }
           '
           npm install
+          npx cypress install
 
       - name: 🚀 Subir Aplicação do Dev e Executar Motor de Auditoria de QA
         run: |
