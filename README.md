@@ -42,27 +42,36 @@ flowchart LR
 
 ## 🎤 Roteiro da Demonstração ao Vivo na Palestra
 
-O repositório já conta com **3 branches** prontas para demonstrar o fluxo completo de um desenvolvedor abrindo Pull Requests e sendo auditado pelo motor externo de QA:
+O projeto foi desenhado em **3 atos** para demonstrar o problema em produção e como a esteira com **Cypress + Cucumber + IA** protege a `main`:
 
-### 1️⃣ Branch Principal (`main`) — Produção 100% Acessível
-Contém a tela de login da **QAfé Academy** construída com conformidade **WCAG 2.2 AA/AAA**:
-- Skip Link (`WCAG 2.4.1`)
-- Foco visível de alto contraste 9.66:1 (`WCAG 2.4.7` / `2.4.11`)
-- Abas com semântica `role="tablist"`, `role="tab"`, `aria-selected` e `aria-controls`
-- Mensagens de feedback com `role="alert"` e `aria-live="polite"` (`WCAG 4.1.3`)
+### 1️⃣ Ato 1: O Problema em Produção (`main` em `https://qafeally.angelofdiasg.tech/`)
+A página inicialmente publicada na `main` contém **falhas críticas clássicas de acessibilidade** para serem auditadas ao vivo com **Google Lighthouse**, **WAVE** e **Leitor de Tela (NVDA / VoiceOver)**:
+1. **Links vazios / sem nome acessível (`WCAG 4.1.2` / `2.4.4`):**
+   - Link **"Blog"** no cabeçalho com `<span aria-hidden="true">Blog</span>` e sem `aria-label`.
+   - Links de **Instagram (`@oanjoeducador`), YouTube e LinkedIn** no rodapé sem `aria-label` e com conteúdo interno em `aria-hidden="true"`. O leitor de tela anuncia apenas *"link, link, link"* e o WAVE/Lighthouse aponta **Empty Link**.
+2. **Campo de formulário sem `<label>` (`WCAG 1.3.1` / `3.3.2`):**
+   - Input `"Código de convite da turma"` sem `<label for="auth-coupon">` nem `aria-label`, dependendo apenas de `placeholder` (**Missing Form Label** no WAVE/Lighthouse).
+3. **Baixo contraste severo (`WCAG 1.4.3`):**
+   - Texto de instrução `#coupon-hint` com cor `#4a4a4a` sobre fundo `#222222` (razão de contraste ~1.6:1, muito abaixo do mínimo 4.5:1 — **Low Contrast** no WAVE/Lighthouse).
+4. **Bloqueio de navegação por teclado (`WCAG 2.1.1`):**
+   - Link `"Esqueci minha senha"` com `tabindex="-1"` e sem `href`, impossível de alcançar com a tecla `Tab`.
 
-### 2️⃣ Pull Request Rejeitado ❌ (`demo/pr-rejeitado`)
-Simula um desenvolvedor entregando o campo de **"Código de convite"** e o link **"Esqueci minha senha"**, mas introduzindo **3 falhas críticas de acessibilidade**:
-1. **Link "Blog" oculto para leitores de tela (`WCAG 4.1.2` / `2.4.4`):** `<a href="..."><span aria-hidden="true">Blog</span></a>` — o leitor de tela anuncia apenas *"link"*.
-2. **Input de Cupom sem `<label>` nem `aria-label` (`WCAG 1.3.1` / `3.3.2`):** depende apenas de `placeholder`.
-3. **Link "Esqueci minha senha" inacessível por teclado (`WCAG 2.1.1`):** usa `tabindex="-1"` e não possui atributo `href`.
+---
 
-🔗 **[Clique aqui para abrir o PR Rejeitado ao vivo](https://github.com/AngeloFDiasGTech/qafeally/compare/main...demo/pr-rejeitado?expand=1)**
-
-### 3️⃣ Pull Request Aprovado ✅ (`demo/pr-aprovado`)
-Simula o desenvolvedor entregando a mesma feature seguindo as diretrizes da **WCAG 2.2**:
-1. Link **"Blog"** acessível para leitores de tela.
+### 2️⃣ Ato 2: O Pull Request que Corrige Tudo e Passa no Quality Gate ✅ (`demo/pr-aprovado`)
+Simula a entrega da correção completa de acessibilidade segundo a **WCAG 2.2 AA/AAA**:
+1. Link **"Blog"** e links das **redes sociais no rodapé** com nome acessível descritivo (`aria-label`).
 2. Campo **"Código de convite da turma"** com `<label for="auth-coupon">` explícito e dica vinculada via `aria-describedby="coupon-hint"`.
-3. Link **"Esqueci minha senha"** semântico, alcançável por teclado (`Tab`) e com indicador de foco visível.
+3. Dica do cupom com contraste elevado (`#e5e7eb` sobre `#222222`, contraste > 11:1).
+4. Link **"Esqueci minha senha"** semântico, alcançável por teclado (`Tab`) e com indicador de foco visível.
 
-🔗 **[Clique aqui para abrir o PR Aprovado ao vivo](https://github.com/AngeloFDiasGTech/qafeally/compare/main...demo/pr-aprovado?expand=1)**
+🔗 **[Clique aqui para abrir o PR Aprovado (Correção WCAG 2.2) ao vivo](https://github.com/AngeloFDiasGTech/qafeally/compare/main...demo/pr-aprovado?expand=1)**
+
+---
+
+### 3️⃣ Ato 3: Tentativa de Regressão Bloqueada pelo Quality Gate ❌ (`demo/pr-rejeitado`)
+Simula um desenvolvedor tentando abrir um PR que introduz falhas críticas de acessibilidade (ou tenta subir um botão/campo sem acessibilidade):
+- A pipeline executa o motor externo `a11y-cypress-ia` (Cypress + Cucumber + OpenAI `gpt-4o`).
+- A IA detecta as violações da WCAG 2.2, **comenta o laudo detalhado no PR** com sugestões de código e **bloqueia o botão de Merge** no GitHub!
+
+🔗 **[Clique aqui para abrir o PR Rejeitado (Bloqueado pela IA) ao vivo](https://github.com/AngeloFDiasGTech/qafeally/compare/main...demo/pr-rejeitado?expand=1)**
