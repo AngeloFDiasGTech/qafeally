@@ -35,7 +35,27 @@ jobs:
 
       - name: 📦 Instalar dependências do Motor de QA (Cypress + Cucumber + OpenAI)
         working-directory: qa-audit-engine
-        run: npm install
+        run: |
+          # Remove UTF-8 BOM de todos os arquivos JSON/JS/Feature caso tenham sido salvos no Windows com BOM
+          node -e '
+            const fs = require("fs");
+            const files = [
+              "package.json",
+              "package-lock.json",
+              "cypress.config.js",
+              "cypress/e2e/features/a11y.feature",
+              "cypress/e2e/steps/a11ySteps.js",
+              "cypress/support/e2e.js",
+              "cypress/support/commands.js"
+            ];
+            for (const f of files) {
+              if (fs.existsSync(f)) {
+                const content = fs.readFileSync(f, "utf8").replace(/^\uFEFF/, "");
+                fs.writeFileSync(f, content, { encoding: "utf8" });
+              }
+            }
+          '
+          npm install
 
       - name: 🚀 Subir Aplicação do Dev e Executar Motor de Auditoria de QA
         run: |
