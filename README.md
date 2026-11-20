@@ -65,13 +65,17 @@ Simula a entrega da correção completa de acessibilidade segundo a **WCAG 2.2 A
 3. Dica do cupom com contraste elevado (`#e5e7eb` sobre `#222222`, contraste > 11:1).
 4. Link **"Esqueci minha senha"** semântico, alcançável por teclado (`Tab`) e com indicador de foco visível.
 
-🔗 **[Clique aqui para abrir o PR Aprovado (Correção WCAG 2.2) ao vivo](https://github.com/AngeloFDiasGTech/qafeally/compare/main...demo/pr-aprovado?expand=1)**
+🔗 **Links rápidos para abrir os PRs ao vivo na palestra:**
+- **[Abrir PR Aprovado ao vivo (`ao-vivo/pr-aprovado`)](https://github.com/AngeloFDiasGTech/qafeally/compare/main...ao-vivo/pr-aprovado?expand=1)**
+- *(Backup já executado e pronto na aba Pull Requests: `demo/pr-aprovado` — PR #2)*
 
 ---
 
-### 3️⃣ Ato 3: Tentativa de Regressão Bloqueada pelo Quality Gate ❌ (`demo/pr-rejeitado`)
+### 3️⃣ Ato 3: Tentativa de Regressão Bloqueada pelo Quality Gate ❌ (`ao-vivo/pr-rejeitado` / `demo/pr-rejeitado`)
 Simula um desenvolvedor tentando abrir um PR que introduz falhas críticas de acessibilidade (ou tenta subir um botão/campo sem acessibilidade):
-- A pipeline executa o motor externo `a11y-cypress-ia` (Cypress + Cucumber + OpenAI `gpt-4o`).
+- A pipeline executa o motor externo `a11y-cypress-ia` (Cypress 16.3.0 + Cucumber Badeball + OpenAI `gpt-4o`).
 - A IA detecta as violações da WCAG 2.2, **comenta o laudo detalhado no PR** com sugestões de código e **bloqueia o botão de Merge** no GitHub!
 
-🔗 **[Clique aqui para abrir o PR Rejeitado (Bloqueado pela IA) ao vivo](https://github.com/AngeloFDiasGTech/qafeally/compare/main...demo/pr-rejeitado?expand=1)**
+🔗 **Links rápidos para abrir os PRs ao vivo na palestra:**
+- **[Abrir PR Rejeitado ao vivo (`ao-vivo/pr-rejeitado`)](https://github.com/AngeloFDiasGTech/qafeally/compare/main...ao-vivo/pr-rejeitado?expand=1)**
+- *(Backup já executado e pronto na aba Pull Requests: `demo/pr-rejeitado` — PR #1)*
