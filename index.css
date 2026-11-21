@@ -242,14 +242,6 @@ input:focus-visible,
   margin-left: 0.25rem;
 }
 
-/* FALHA CRÍTICA DE CONTRASTE (WCAG 1.4.3 — Contraste ~1.6:1 sobre #222222, reprovado no Lighthouse e WAVE) */
-.low-contrast-warning {
-  font-weight: 400;
-  font-size: 0.75rem;
-  color: #4a4a4a;
-  margin-top: 0.25rem;
-}
-
 .form-input {
   width: 100%;
   background-color: var(--bg-chumbo);
