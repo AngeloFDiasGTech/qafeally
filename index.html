@@ -42,10 +42,7 @@
           <a href="https://angelofdiasg.tech/#servicos" class="nav-link">
             Serviços &amp; Mentorias
           </a>
-          <!-- FALHA CRÍTICA 1 (WCAG 4.1.2 / 2.4.4 — Empty Link no Lighthouse/WAVE): texto dentro de aria-hidden="true" sem aria-label no link -->
-          <a href="https://angelofdiasg.tech/blog" class="nav-link">
-            <span aria-hidden="true">Blog</span>
-          </a>
+          <a href="https://angelofdiasg.tech/blog" class="nav-link">Blog</a>
         </nav>
       </div>
     </header>
@@ -161,26 +158,30 @@
               />
             </div>
 
-            <!-- FALHA CRÍTICA 2 (WCAG 1.3.1 / 3.3.2 / 4.1.2 — Missing Form Label no Lighthouse/WAVE) + FALHA CRÍTICA 3 (WCAG 1.4.3 — Baixo Contraste #4a4a4a em #222222) -->
+            <!-- Campo de Cupom Acessível (WCAG 1.3.1, 3.3.2, 4.1.2, 1.4.3) com label explícito, aria-describedby e alto contraste -->
             <div class="form-group">
+              <label for="auth-coupon" class="form-label">
+                Código de convite da turma
+                <span class="label-hint">(opcional)</span>
+              </label>
               <input
                 id="auth-coupon"
                 name="coupon"
                 type="text"
                 data-testid="input-coupon"
-                placeholder="Código de convite da turma (opcional)"
+                aria-describedby="coupon-hint"
+                placeholder="Ex: QAFE2026"
                 class="form-input"
               />
-              <span id="coupon-hint" class="low-contrast-warning">
+              <span id="coupon-hint" class="label-hint">
                 Informe o código recebido em palestra ou mentoria para liberar seu acesso.
               </span>
             </div>
 
-            <!-- FALHA CRÍTICA 4 (WCAG 2.1.1 — Bloqueio de Teclado): link com tabindex="-1" e sem href -->
+            <!-- Recuperação de Senha Acessível por Teclado (WCAG 2.1.1, 2.4.4) -->
             <div class="form-group">
               <a
-                tabindex="-1"
-                onclick="alert('Recuperação de senha')"
+                href="https://angelofdiasg.tech/qafeacademy/recuperar-senha"
                 class="nav-link"
               >
                 Esqueci minha senha — Recuperar acesso
@@ -223,18 +224,18 @@
           </p>
         </div>
 
-        <!-- Bloco Direito: Links Sociais e QAfé Academy -->
-        <!-- FALHA CRÍTICA 5 (WCAG 4.1.2 / 2.4.4 — Empty Links no Lighthouse/WAVE e Leitor de Tela anuncia apenas "link"): links sem aria-label e conteúdo interno com aria-hidden="true" -->
+        <!-- Bloco Direito: Links Sociais e QAfé Academy (Todos com aria-label acessível — WCAG 4.1.2 / 2.4.4) -->
         <nav
           aria-label="Redes sociais e plataforma de cursos"
           class="footer-social-nav"
         >
-          <!-- @oanjoeducador (Sem aria-label!) -->
+          <!-- @oanjoeducador -->
           <a
             href="https://www.instagram.com/oanjoeducador/"
             target="_blank"
             rel="noreferrer"
             class="footer-badge-link"
+            aria-label="Instagram @oanjoeducador (abre em nova aba)"
           >
             <span aria-hidden="true" class="badge-text">
               <span class="c-cyan">@o</span><span class="c-blue">anjo</span
@@ -244,12 +245,13 @@
 
           <span class="footer-divider" aria-hidden="true">|</span>
 
-          <!-- YouTube (Sem aria-label!) -->
+          <!-- YouTube -->
           <a
             href="https://www.youtube.com/@angelofdiasgtech"
             target="_blank"
             rel="noreferrer"
             class="footer-badge-link"
+            aria-label="Canal no YouTube angelofdiasgtech (abre em nova aba)"
           >
             <span aria-hidden="true" class="badge-inline">
               <svg
@@ -271,12 +273,13 @@
 
           <span class="footer-divider" aria-hidden="true">|</span>
 
-          <!-- LinkedIn (Sem aria-label!) -->
+          <!-- LinkedIn -->
           <a
             href="https://www.linkedin.com/in/angelofdiasg/"
             target="_blank"
             rel="noreferrer"
             class="footer-badge-link"
+            aria-label="Perfil no LinkedIn de Angelo F. Dias Gonçalves (abre em nova aba)"
           >
             <span aria-hidden="true" class="badge-inline">
               <svg
